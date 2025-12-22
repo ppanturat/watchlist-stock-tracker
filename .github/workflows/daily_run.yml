@@ -3,7 +3,7 @@ name: Daily Stock Report
 on:
   schedule:
     #run at 02:00 UTC (09:00 AM Thailand Time)
-    - cron: '0 2 * * *'
+    - cron: '15 2 * * *'
   #allow you to click "Run Now" manually for testing
   workflow_dispatch:
 
