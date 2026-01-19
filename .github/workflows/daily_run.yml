@@ -8,23 +8,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run_tracker:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+      - name: Install Dependencies
+        run: pip install yfinance requests supabase
 
-      - name: Install libraries
-        run: pip install yfinance requests
-
-      - name: Run Report Script
+      - name: Run Stock Tracker
         env:
-          #passes the secret from GitHub Settings to the script
           DISCORD_URL: ${{ secrets.DISCORD_URL }}
-        run: python script.py
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python check_stocks.py
+
+      - name: Run Parcel Tracker
+        env:
+          DISCORD_URL: ${{ secrets.DISCORD_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TRACK17_KEY: ${{ secrets.TRACK17_KEY }} # Don't forget this new secret!
+        run: python check_parcels.py
