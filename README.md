@@ -77,7 +77,7 @@ create table stocks (
 
 ```
 
-**Table: `parcels**`
+**Table: `parcels`**
 
 ```sql
 create table parcels (
