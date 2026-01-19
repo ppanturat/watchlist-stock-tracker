@@ -113,16 +113,16 @@ create table parcels (
 
 ### 1. Stock Commands
 **`/add_stock`** - Adding a new stock to the watchlist.
-<img width="1409" height="167" alt="Image" src="https://github.com/user-attachments/assets/e1350486-24fd-4c04-b6bf-e674ae3fb148" />
+<img width="800" alt="Add Stock Demo" src="https://github.com/user-attachments/assets/e1350486-24fd-4c04-b6bf-e674ae3fb148" />
 
 **`/list_stock`** - Viewing the current configuration (Buckets & Targets).
-<img src="https://github.com/user-attachments/assets/886639fe-5f12-44a0-be31-236e8e5cfba8" width="600" alt="List Stock Demo" />
+<img width="600" alt="List Stock Demo" src="https://github.com/user-attachments/assets/886639fe-5f12-44a0-be31-236e8e5cfba8" />
 
 **`/edit_stock`** - Updating a target price without deleting.
-<img width="1433" height="171" alt="Image" src="https://github.com/user-attachments/assets/44727d6d-d368-4d27-9112-1f9c2a979414" />
+<img width="800" alt="Edit Stock Demo" src="https://github.com/user-attachments/assets/44727d6d-d368-4d27-9112-1f9c2a979414" />
 
 **Error Handling** - The bot warns you if you try to add a duplicate stock.
-<img width="1572" height="209" alt="Image" src="https://github.com/user-attachments/assets/8ede664f-0244-448a-8732-59efda6135ff" />
+<img width="800" alt="Edit Stock Error Demo" src="https://github.com/user-attachments/assets/8ede664f-0244-448a-8732-59efda6135ff" />
 
 **Daily Price Report** - The automated report sent every day at 2:00 PM.
 ![Daily Report Demo](path/to/your/screenshot_daily_report.png)
