@@ -55,8 +55,8 @@ Both **Vercel** and **GitHub Actions** require these secrets to function.
 
 | Key | Description | Required In |
 | :--- | :--- | :--- |
-| `DISCORD_URL` | Webhook URL for the **Stock Channel**. | GitHub |
-| `PARCEL_WEBHOOK_URL`| Webhook URL for the **Parcel Channel**. | GitHub |
+| `STOCK_DISCORD_URL` | Webhook URL for the **Stock Channel**. | GitHub |
+| `PARCEL_DISCORD_URL`| Webhook URL for the **Parcel Channel**. | GitHub |
 | `PARCEL_TRACK_DISCORD_URL`| Webhook URL for **Parcel Alerts** (30 min updates). | GitHub |
 | `SUPABASE_URL` | Your Supabase Project URL. | Vercel & GitHub |
 | `SUPABASE_KEY` | Your Supabase `service_role` or `anon` key. | Vercel & GitHub |
