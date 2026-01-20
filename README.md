@@ -1,6 +1,7 @@
 ---
 # 📦 Universal Discord Tracker (Stocks & Parcels)
 
+[📘 **Read the Full Deployment Guide (Wiki)**](../../wiki)
 A serverless, zero-cost Discord bot that tracks **Stock Prices** and **Parcel Shipments**. 
 
 Built with **Python**, hosted on **Vercel** (for commands), and powered by **GitHub Actions** (for scheduled updates). It uses **Supabase** as the database memory.
