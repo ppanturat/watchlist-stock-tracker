@@ -93,20 +93,24 @@ create table parcels (
 ---
 
 ## 📂 Project Structure
-
+### Discord Tracker 
 ```text
 ├── .github/workflows/
 │   ├── daily_report.yml    # Runs daily at 2 PM (Stocks + Parcel Summary)
 │   └── parcel_watcher.yml  # Runs every 30 mins (Real-time updates)
-├── api/
-│   └── index.py            # Vercel Serverless Function (The "Listener")
 ├── check_stocks.py         # Script: Generates Daily Stock Report
 ├── check_parcels.py        # Script: Checks for parcel status changes
 ├── daily_parcel_report.py  # Script: Summarizes all parcels
-├── register_commands.py    # Utility: Registers slash commands with Discord
-├── requirements.txt        # Python dependencies
 └── README.md               # You are here
 
+```
+### Discord Listener 
+```text
+├── api/
+│   └── index.py            # The Brain (Vercel runs this)
+├── register_commands.py    # The Menu (You run this locally)
+├── requirements.txt        # Dependencies
+└── README.md               # Private Guide
 ```
 ---
 ## 📸 Appendix: Gallery
