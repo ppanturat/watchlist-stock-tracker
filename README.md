@@ -130,16 +130,16 @@ create table parcels (
 <img width="800" alt="Edit Stock Error Demo" src="https://github.com/user-attachments/assets/8ede664f-0244-448a-8732-59efda6135ff" />
 
 **Daily Price Report** - The automated report sent every day at 2:00 PM.
-<img width="1484" height="865" alt="Daily Report Demo" src="https://github.com/user-attachments/assets/fdfac0e4-462f-490a-b745-fdbefc94a492" />
+<img width="600" height="865" alt="Daily Report Demo" src="https://github.com/user-attachments/assets/fdfac0e4-462f-490a-b745-fdbefc94a492" />
 
 ---
 
 ### 2. Parcel Commands
 **`/track`** - Registering a new tracking number.
-<img width="1351" height="247" alt="Track Parcel Demo" src="https://github.com/user-attachments/assets/87cb3673-dc66-4231-bd00-4fbf34550d53" />
+<img width="800" height="247" alt="Track Parcel Demo" src="https://github.com/user-attachments/assets/87cb3673-dc66-4231-bd00-4fbf34550d53" />
 
 **`/parcels`** - Checking your active shipments.
-<img width="1397" height="216" alt="Parcel List Demo" src="https://github.com/user-attachments/assets/445a2e46-e7d9-4185-a439-711268a61c49" />
+<img width="800" height="216" alt="Parcel List Demo" src="https://github.com/user-attachments/assets/445a2e46-e7d9-4185-a439-711268a61c49" />
 
 **`Real-Time Update`** - The alert you get when a parcel moves.
 ![Parcel Alert Demo](path/to/your/screenshot_parcel_alert.png)
