@@ -17,7 +17,7 @@ def send_discord_message(content):
     requests.post(PARCEL_DISCORD_URL, json={"content": content})
 
 def run_daily_report():
-    print("Running Daily Report...")
+    print("Running Daily Parcel Report...")
 
     # Fetch all parcels
     response = supabase.table('parcels').select("*").execute()
@@ -31,25 +31,40 @@ def run_daily_report():
     payload = [{"number": p['tracking_number']} for p in parcels]
     headers = {"17token": TRACK17_KEY, "Content-Type": "application/json"}
     
+    url = "https://api.17track.net/track/v2.2/gettrackinfo"
+    
     try:
-        # Note: 'gettrackinfo' returns the list directly in 'data', not 'accepted'
-        resp = requests.post("https://api.17track.net/track/v2.2/gettrackinfo", json=payload, headers=headers)
+        resp = requests.post(url, json=payload, headers=headers)
         api_data = resp.json()
         
+        # DEBUG: Un-comment the next line if you get errors again
+        # print(f"DEBUG RAW DATA: {api_data}")
+
         if api_data.get("code") != 0:
             print(f"API Error: {api_data.get('message')}")
             return
             
-        track_infos = api_data.get("data", [])
+        raw_data = api_data.get("data", [])
+        if isinstance(raw_data, dict):
+            print("Warning: Received Dict instead of List. Attempting to fix...")
+            track_infos = raw_data.get("accepted", []) 
+        else:
+            track_infos = raw_data
         
     except Exception as e:
         print(f"Connection Error: {e}")
         return
 
+    # Build the Report
     message_lines = []
     ids_to_delete = []
 
     for info in track_infos:
+        # Double check info is a dict
+        if isinstance(info, str):
+            print(f"Skipping invalid item: {info}")
+            continue
+
         number = info.get("number")
         track_info = info.get("track_info", {})
         latest_event = track_info.get("latest_event", {})
@@ -57,11 +72,9 @@ def run_daily_report():
         
         description = latest_event.get("context")
         
-        # If empty, try the standard description (e.g. "In Transit")
         if not description:
             description = latest_event.get("status_description")
             
-        # If STILL empty, map the code manually
         if not description:
             stage = latest_status.get("status")
             status_map = {
@@ -73,39 +86,40 @@ def run_daily_report():
             }
             description = status_map.get(stage, "Tracking...")
 
-        # Get Location (if available)
+        # Location
         location = latest_event.get("location")
         loc_str = f" *({location})*" if location else ""
 
-        # Map Emoji based on Stage
+        # Emoji
         stage = latest_status.get("status")
         emoji = "🚚"
-        if stage == 0: emoji = "📮"   # Registered
-        if stage == 30: emoji = "📦"  # Pickup
-        if stage == 40: emoji = "✅"  # Delivered
-        if stage == 50: emoji = "⚠️"  # Alert
+        if stage == 0: emoji = "📮"
+        if stage == 30: emoji = "📦"
+        if stage == 40: emoji = "✅"
+        if stage == 50: emoji = "⚠️"
 
-        # Format: 🚚 `ED123...` : Arrived at Sorting Center (Bangkok)
         line = f"{emoji} `{number}` : {description}{loc_str}"
         message_lines.append(line)
 
         # Mark for deletion if Delivered
-        if stage == 40 or "Delivered" in str(stage):
+        if stage == 40:
             ids_to_delete.append(number)
 
+    # Send Report
     if message_lines:
         final_msg = "**🌅 Daily Parcel Summary**\n" + "\n".join(message_lines)
-        
         if ids_to_delete:
             final_msg += "\n\n🧹 **Auto-Cleaning:** Delivered parcels have been removed."
-
         send_discord_message(final_msg)
         print("Report sent to Discord.")
+    else:
+        print("No info found to report.")
 
+    # Cleanup
     if ids_to_delete:
         for num in ids_to_delete:
             supabase.table('parcels').delete().eq('tracking_number', num).execute()
-            print(f"Removed {num} from database.")
+            print(f"Removed {num}")
 
 if __name__ == "__main__":
     run_daily_report()
