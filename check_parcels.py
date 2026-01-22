@@ -52,23 +52,28 @@ def check_parcels():
                 track_info = info.get("track_info", {})
                 latest_event = track_info.get("latest_event", {})
                 latest_status = track_info.get("latest_status", {})
-                
-                # Priority 1: Try to get the detailed sentence (e.g., "Arrived at Laksi")
                 current_status = latest_event.get("context")
                 
-                # Priority 2: If empty, try the short description (e.g., "In Transit")
                 if not current_status:
                     current_status = latest_event.get("status_description")
                 
-                # Priority 3: If STILL empty, map the numeric code manually
                 if not current_status:
                     stage_code = latest_status.get("status")
-                    if stage_code == 0: current_status = "Registered (Waiting for Update)"
-                    elif stage_code == 10: current_status = "In Transit"
-                    elif stage_code == 30: current_status = "Out for Delivery"
-                    elif stage_code == 40: current_status = "Delivered"
-                    elif stage_code == 50: current_status = "Alert / Exception"
-                    else: current_status = "Tracking..."
+                    sub_stage = latest_status.get("subStatus") # <--- New Check
+
+                    if stage_code == 0: 
+                        if sub_stage == "NotFound":
+                            current_status = "Registered (Waiting for Carrier Scan)"
+                        else:
+                            current_status = "Registered (System Processing)"
+                    elif stage_code == 10: current_status = "In Transit (Moving)"
+                    elif stage_code == 30: current_status = "Out for Delivery / Pickup"
+                    elif stage_code == 40: current_status = "Delivered Successfully"
+                    elif stage_code == 50: current_status = "Alert: Check Courier Website"
+                    else: 
+                        # If we get here, print the raw data to logs so we can debug later
+                        print(f"DEBUG UNKNOWN STATUS: Code={stage_code}, Sub={sub_stage}")
+                        current_status = f"Tracking (Stage: {stage_code})"
 
                 # Clean up length
                 current_status = current_status[:200]
