@@ -49,46 +49,49 @@ def check_parcels():
             db_parcel = next((p for p in parcels if p['tracking_number'] == number), None)
             
             if db_parcel:
-                # Get the detailed context (e.g. "Arrived at Sorting Center")
-                track_events = info.get("track_info", {}).get("latest_event", {})
-                latest_detail = track_events.get("context", "Unknown Status")
+                track_info = info.get("track_info", {})
+                latest_event = track_info.get("latest_event", {})
+                latest_status = track_info.get("latest_status", {})
                 
-                # Get the generic stage (10=InTransit, 40=Delivered)
-                stage = info.get("track_info", {}).get("latest_status", {}).get("status")
+                # Priority 1: Try to get the detailed sentence (e.g., "Arrived at Laksi")
+                current_status = latest_event.get("context")
+                
+                # Priority 2: If empty, try the short description (e.g., "In Transit")
+                if not current_status:
+                    current_status = latest_event.get("status_description")
+                
+                # Priority 3: If STILL empty, map the numeric code manually
+                if not current_status:
+                    stage_code = latest_status.get("status")
+                    if stage_code == 0: current_status = "Registered (Waiting for Update)"
+                    elif stage_code == 10: current_status = "In Transit"
+                    elif stage_code == 30: current_status = "Out for Delivery"
+                    elif stage_code == 40: current_status = "Delivered"
+                    elif stage_code == 50: current_status = "Alert / Exception"
+                    else: current_status = "Tracking..."
 
-                # --- NEW LOGIC ---
-                # Determine what status string we want to save/compare
-                if stage == 40:
-                    # If Delivered, force status to "Delivered" so the DB filter stops checking it next time
-                    current_status = "Delivered"
-                else:
-                    # Otherwise, use the DETAILED description so we get updates on every move
-                    current_status = latest_detail
+                # Clean up length
+                current_status = current_status[:200]
 
-                # Clean up: 17Track sometimes sends long details, truncate if needed
-                current_status = current_status[:200] if current_status else "In Transit"
-
-                # Check if it CHANGED since the last time we checked
+                # Check for change
                 if db_parcel['last_status'] != current_status:
                     
-                    # 🔔 IT CHANGED! Send Message for THIS parcel only.
                     user_id = db_parcel['discord_user_id']
                     
-                    # Pick an emoji based on stage
+                    # Pick Emoji
+                    stage = latest_status.get("status")
                     emoji = "🚚"
-                    if stage == 10: emoji = "🚛" # Moving
-                    if stage == 30: emoji = "📦" # Pickup
-                    if stage == 40: emoji = "✅" # Delivered
+                    if stage == 0: emoji = "📮"
+                    if stage == 30: emoji = "📦"
+                    if stage == 40: emoji = "✅"
+                    if stage == 50: emoji = "⚠️"
                     
                     msg = f"{emoji} **Update for <@{user_id}>!**\nTracking: `{number}`\nStatus: **{current_status}**"
                     send_discord_message(msg)
                     
-                    # Update Database so we don't notify again for this specific step
+                    # Update DB
                     supabase.table('parcels').update({'last_status': current_status}).eq('id', db_parcel['id']).execute()
                     print(f"Updated {number} to: {current_status}")
-                
-                # If statuses match (db_parcel['last_status'] == current_status):
-                # We do NOTHING. The bot stays silent.
 
     except Exception as e:
         print(f"Error checking parcels: {e}")
