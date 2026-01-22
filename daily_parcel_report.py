@@ -24,7 +24,7 @@ def run_daily_report():
 
     # ask 17Track for latest info
     payload = [{"number": p['tracking_number']} for p in parcels]
-    headers = {"RF-TOKEN": TRACK17_KEY, "Content-Type": "application/json"}
+    headers = {"17token": TRACK17_KEY, "Content-Type": "application/json"}
     
     try:
         resp = requests.post("https://api.17track.net/track/v2.2/gettrackinfo", json=payload, headers=headers)
