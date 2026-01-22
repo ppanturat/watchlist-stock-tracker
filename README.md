@@ -1,6 +1,9 @@
 ---
 # 📦 Universal Discord Tracker (Stocks & Parcels)
 
+<img src="https://github.com/ppanturat/tracker-bot/actions/workflows/daily_run.yml/badge.svg" height="35" />
+<img src="https://github.com/ppanturat/tracker-bot/actions/workflows/parcel_watcher.yml/badge.svg" height="35" />
+
 [📘 **Read the Full Deployment Guide (Wiki)**](../../wiki)
 A serverless, zero-cost Discord bot that tracks **Stock Prices** and **Parcel Shipments**. 
 
@@ -143,6 +146,7 @@ create table parcels (
 
 **`Real-Time Update`** - The alert you get when a parcel moves.
 <img width="800" alt="Parcel Alert Demo" src="assets/parcel-daily-report.png" />
+
 ---
 
 *Created for personal use. 100% Automated.*
