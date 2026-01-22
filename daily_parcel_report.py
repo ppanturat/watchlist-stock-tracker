@@ -3,7 +3,7 @@ import requests
 from supabase import create_client
 
 # --- CONFIGS ---
-PARCEL_DISCORD_URL = os.environ.get('PARCEL_TRACK_DISCORD_URL') 
+PARCEL_DISCORD_URL = os.environ.get('PARCEL_DISCORD_URL') 
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
 TRACK17_KEY = os.environ.get('TRACK17_KEY')
