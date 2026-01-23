@@ -67,9 +67,13 @@ def run_daily_report():
             continue
 
         number = info.get("number")
-        track_info = info.get("track_info", {})
-        latest_event = track_info.get("latest_event", {})
-        latest_status = track_info.get("latest_status", {})
+        
+        # --- SAFE EXTRACTION START ---
+        # We use 'or {}' to handle cases where the API returns explicit nulls
+        track_info = info.get("track_info") or {}
+        latest_event = track_info.get("latest_event") or {}
+        latest_status = track_info.get("latest_status") or {}
+        # --- SAFE EXTRACTION END ---
         
         description = latest_event.get("context")
         
