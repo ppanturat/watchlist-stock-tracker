@@ -68,42 +68,51 @@ def run_daily_report():
 
         number = info.get("number")
         
-        # --- SAFE EXTRACTION START ---
-        # We use 'or {}' to handle cases where the API returns explicit nulls
         track_info = info.get("track_info") or {}
         latest_event = track_info.get("latest_event") or {}
         latest_status = track_info.get("latest_status") or {}
-        # --- SAFE EXTRACTION END ---
         
+        # Get Description (e.g. "Arrived at Sorting Center")
         description = latest_event.get("context")
         
         if not description:
             description = latest_event.get("status_description")
             
-        if not description:
-            stage = latest_status.get("status")
-            status_map = {
-                0: "Registered (Waiting for Scan)",
-                10: "In Transit",
-                30: "Ready for Pickup",
-                40: "Delivered",
-                50: "Exception / Alert"
-            }
-            description = status_map.get(stage, "Tracking...")
+        # Get Stage Code & SubStatus
+        stage = latest_status.get("status")
+        sub_stage = latest_status.get("subStatus")
 
-        # Location
+        # Fallback 
+        if not description:
+            if stage == 0: 
+                if sub_stage == "NotFound":
+                    description = "Registered (Waiting for Carrier Scan)"
+                else:
+                    description = "Registered (System Processing)"
+            elif stage == 10: description = "In Transit (Moving)"
+            elif stage == 30: description = "Out for Delivery / Pickup"
+            elif stage == 40: description = "Delivered Successfully"
+            elif stage == 50: description = "Alert: Check Courier Website"
+            else: 
+                # Last resort if even the stage is weird
+                description = f"Status Unknown: {stage}"
+
         location = latest_event.get("location")
-        loc_str = f" *({location})*" if location else ""
+        
+        # Combine: "Description, Location" or just "Description"
+        if location:
+            final_desc = f"{description}, {location}"
+        else:
+            final_desc = description
 
         # Emoji
-        stage = latest_status.get("status")
         emoji = "🚚"
         if stage == 0: emoji = "📮"
         if stage == 30: emoji = "📦"
         if stage == 40: emoji = "✅"
         if stage == 50: emoji = "⚠️"
 
-        line = f"{emoji} `{number}` : {description}{loc_str}"
+        line = f"{emoji} `{number}` : {final_desc}"
         message_lines.append(line)
 
         # Mark for deletion if Delivered
